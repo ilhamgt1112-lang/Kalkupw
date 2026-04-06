@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Pixel Kalku</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#000;
+  color:white;
+  text-align:center;
+  padding-top:50px;
+}
+
+#kalkuBox{
+  display:none;
+}
+
+input,select{
+  padding:12px;
+  font-size:18px;
+  margin:10px;
+  border-radius:10px;
+  border:none;
+  text-align:center;
+}
+
+button{
+  padding:12px 25px;
+  border:none;
+  border-radius:12px;
+  background:#4CAF50;
+  color:white;
+  font-size:16px;
+}
+
+#hasil{
+  margin-top:20px;
+  font-size:22px;
+  font-weight:bold;
+}
+
+#premium{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:10;
+}
+
+.premium-box{
+  background:#000;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 0 25px lime;
+}
+
+.opening{
+  animation:openBox 0.8s ease;
+}
+
+@keyframes openBox{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.2) rotate(3deg);}
+  100%{transform:scale(0);}
+}
+
+#loading{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  z-index:20;
+}
+
+#basicCalc{
+  display:none;
+  margin-top:20px;
+}
+
+.calc-btn{
+  width:60px;
+  height:60px;
+  margin:3px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="loading">🔓 Membuka...</div>
+
+<div id="premium">
+  <div class="premium-box" id="premiumBox">
+    <h2>🔒 Premium</h2>
+    <input type="text" id="kode" placeholder="Kode">
+    <br>
+    <button onclick="cek()">Unlock</button>
+    <p id="pesan" style="color:red;"></p>
+  </div>
+</div>
+
+<div id="kalkuBox">
+
+<h1>Kalkulator Pixel World</h1>
+
+<input type="number" id="angka" placeholder="Masukin angka">
+
+<select id="satuan">
+  <option value="10">Puluhan</option>
+  <option value="100">Ratusan</option>
+  <option value="1000" selected>Ribuan</option>
+  <option value="100000">Ratus Ribuan</option>
+  <option value="1000000">Jutaan</option>
+</select>
+
+<br>
+
+<input type="number" id="harga" value="6000">
+<small>Harga</small>
+
+<input type="number" id="hasilBTC" value="1000">
+<small>Hasil BTC</small>
+
+<br>
+
+<button onclick="hitung()">Hitung</button>
+
+<div id="hasil">Hasil: -</div>
+
+<br><br>
+
+<button onclick="toggleCalc()">🧮 Kalkulator Biasa</button>
+
+<div id="basicCalc">
+  <input type="text" id="calcDisplay" readonly><br>
+
+  <button class="calc-btn" onclick="add('7')">7</button>
+  <button class="calc-btn" onclick="add('8')">8</button>
+  <button class="calc-btn" onclick="add('9')">9</button>
+  <button class="calc-btn" onclick="add('/')">÷</button><br>
+
+  <button class="calc-btn" onclick="add('4')">4</button>
+  <button class="calc-btn" onclick="add('5')">5</button>
+  <button class="calc-btn" onclick="add('6')">6</button>
+  <button class="calc-btn" onclick="add('*')">×</button><br>
+
+  <button class="calc-btn" onclick="add('1')">1</button>
+  <button class="calc-btn" onclick="add('2')">2</button>
+  <button class="calc-btn" onclick="add('3')">3</button>
+  <button class="calc-btn" onclick="add('-')">-</button><br>
+
+  <button class="calc-btn" onclick="add('0')">0</button>
+  <button class="calc-btn" onclick="add('.')">.</button>
+  <button class="calc-btn" onclick="hitungCalc()">=</button>
+  <button class="calc-btn" onclick="add('+')">+</button><br>
+
+  <button onclick="clearCalc()">Clear</button>
+</div>
+
+</div>
+
+<script>
+const KODE="vgh";
+let unlocked=false;
+
+function cek(){
+ if(kode.value.toLowerCase()===KODE){
+  premiumBox.classList.add("opening");
+
+  setTimeout(()=>{
+    premium.style.display="none";
+    loading.style.display="flex";
+
+    setTimeout(()=>{
+      loading.style.display="none";
+      kalkuBox.style.display="block";
+      unlocked=true;
+    },1200);
+
+  },700);
+
+ }else{
+  pesan.innerText="Kode salah!";
+ }
+}
+
+function hitung(){
+ if(!unlocked){
+  alert("🔒 Unlock dulu!");
+  return;
+ }
+
+ let angka=parseFloat(document.getElementById("angka").value);
+ let satuan=parseFloat(document.getElementById("satuan").value);
+ let harga=parseFloat(document.getElementById("harga").value);
+ let hasil=parseFloat(document.getElementById("hasilBTC").value);
+
+ if(isNaN(angka)||isNaN(satuan)||isNaN(harga)||isNaN(hasil)) return;
+
+ let uang=angka*satuan;
+ let btc=Math.floor((uang/harga)*hasil);
+
+ document.getElementById("hasil").innerText=
+ "Hasil: "+btc.toLocaleString("id-ID")+" BTC";
+}
+
+function toggleCalc(){
+ basicCalc.style.display=
+ basicCalc.style.display==="none"?"block":"none";
+}
+
+function add(v){
+ calcDisplay.value+=v;
+}
+
+function clearCalc(){
+ calcDisplay.value="";
+}
+
+function hitungCalc(){
+ try{
+  calcDisplay.value=eval(calcDisplay.value);
+ }catch{
+  alert("Error");
+ }
+}
+</script>
+
+</body>
+                                                 </html>
